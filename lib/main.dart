@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -73,6 +74,15 @@ class _MyAppState extends State<MyApp> {
     } else {
       print("Authorization not granted");
       return 0;
+    }
+  }
+
+  //check permission
+  void checkPermission() async {
+    var status = await Permission.activityRecognition.status;
+    if (!status.isGranted) {
+      PermissionStatus permissionStatus =
+          await Permission.activityRecognition.request();
     }
   }
 
@@ -211,7 +221,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _contentNotFetched() {
-    return Text('Press the download button to fetch data');
+    return Column(
+      children: [
+        // TextButton(
+        //     onPressed: checkPermission,
+        //     child: Text("Click Here to Grant permission (Click here first)")),
+        Text('Press the download button to fetch data'),
+      ],
+    );
   }
 
   Widget _authorizationNotGranted() {
@@ -244,6 +261,7 @@ class _MyAppState extends State<MyApp> {
               IconButton(
                 icon: Icon(Icons.file_download),
                 onPressed: () {
+                  checkPermission();
                   fetchData();
                 },
               )
